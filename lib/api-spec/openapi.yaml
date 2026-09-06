@@ -2,14 +2,20 @@ openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 0.2.0
+  description: LifeSci Nexus project workspace API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: projects
+    description: Project workspace operations
+  - name: documents
+    description: Document ingestion and analysis operations
+  - name: memory
+    description: Project-scoped memory operations
 paths:
   /healthz:
     get:
@@ -24,7 +30,270 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List project workspaces
+      responses:
+        "200":
+          description: Project workspaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a project workspace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectInput"
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Invalid project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /projects/{projectId}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get a project workspace
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Project workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /projects/{projectId}/summary:
+    get:
+      operationId: getProjectSummary
+      tags: [projects]
+      summary: Get project workspace summary
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Project summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectSummary"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /projects/{projectId}/documents:
+    get:
+      operationId: listProjectDocuments
+      tags: [documents]
+      summary: List documents in a project
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Project documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    post:
+      operationId: createProjectDocument
+      tags: [documents]
+      summary: Add a document to a project
+      description: Accepts text content or base64-encoded PDF bytes for controlled extraction.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentInput"
+      responses:
+        "201":
+          description: Document ingested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Invalid or unreadable document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /projects/{projectId}/documents/{documentId}:
+    get:
+      operationId: getProjectDocument
+      tags: [documents]
+      summary: Get a project document
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Project document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /projects/{projectId}/documents/{documentId}/analysis:
+    get:
+      operationId: getDocumentAnalysis
+      tags: [documents]
+      summary: Get the latest document analysis
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Latest analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentAnalysis"
+        "404":
+          description: Analysis not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    post:
+      operationId: analyzeDocument
+      tags: [documents]
+      summary: Analyze a project document
+      description: Extracts structure and factual statements without regulatory or clinical conclusions.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "201":
+          description: Analysis created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentAnalysis"
+        "404":
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /projects/{projectId}/memory:
+    get:
+      operationId: listProjectMemory
+      tags: [memory]
+      summary: Retrieve project-scoped memory
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      responses:
+        "200":
+          description: Project memory records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MemoryRecord"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+    post:
+      operationId: createProjectMemory
+      tags: [memory]
+      summary: Add a project memory record
+      description: Creates an auditable project-context record, never external regulatory evidence.
+      parameters:
+        - $ref: "#/components/parameters/ProjectId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MemoryInput"
+      responses:
+        "201":
+          description: Memory record created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemoryRecord"
+        "400":
+          description: Invalid memory record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "404":
+          description: Project not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
 components:
+  parameters:
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    DocumentId:
+      name: documentId
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +302,266 @@ components:
           type: string
       required:
         - status
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    Project:
+      type: object
+      required: [id, name, deviceName, description, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        deviceName:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ProjectInput:
+      type: object
+      required: [name, deviceName, description]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        deviceName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+    ProjectSummary:
+      type: object
+      required: [project, documentCount, analyzedDocumentCount, memoryCount, openQuestionCount, latestActivity]
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+        documentCount:
+          type: integer
+        analyzedDocumentCount:
+          type: integer
+        memoryCount:
+          type: integer
+        openQuestionCount:
+          type: integer
+        latestActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+    ActivityItem:
+      type: object
+      required: [id, kind, label, createdAt]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        label:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+    Document:
+      type: object
+      required: [id, projectId, fileName, mimeType, sizeBytes, status, extractedText, metadata, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        fileName:
+          type: string
+        mimeType:
+          type: string
+        sizeBytes:
+          type: integer
+        objectPath:
+          type: [string, "null"]
+        status:
+          type: string
+          enum: [uploaded, extracted, unreadable]
+        extractedText:
+          type: [string, "null"]
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    DocumentInput:
+      type: object
+      required: [fileName, mimeType, sizeBytes]
+      properties:
+        fileName:
+          type: string
+          minLength: 1
+        mimeType:
+          type: string
+          minLength: 1
+        sizeBytes:
+          type: integer
+          minimum: 1
+        objectPath:
+          type: [string, "null"]
+        content:
+          type: [string, "null"]
+          description: Plain text or base64-encoded PDF bytes.
+    DocumentAnalysis:
+      type: object
+      required: [id, projectId, documentId, version, status, summary, headings, sections, dates, references, facts, uncertainties, missingInformation, createdAt]
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        documentId:
+          type: integer
+        version:
+          type: integer
+        status:
+          type: string
+          enum: [complete, partial, unreadable]
+        summary:
+          type: string
+        headings:
+          type: array
+          items:
+            type: string
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProvenanceSpan"
+        dates:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProvenanceSpan"
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProvenanceSpan"
+        facts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProvenanceFact"
+        uncertainties:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProvenanceSpan"
+        missingInformation:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+    ProvenanceSpan:
+      type: object
+      required: [text, sourceType, locator, confidence]
+      properties:
+        text:
+          type: string
+        sourceType:
+          type: string
+          enum: [uploaded_document]
+        locator:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+    ProvenanceFact:
+      type: object
+      required: [statement, classification, sourceType, locator, confidence]
+      properties:
+        statement:
+          type: string
+        classification:
+          type: string
+          enum: [direct_extraction, interpretation, uncertainty, missing]
+        sourceType:
+          type: string
+          enum: [uploaded_document]
+        locator:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+    MemoryType:
+      type: string
+      enum: [project_fact, document_fact, prior_finding, reviewer_comment, reviewer_decision, open_question, workflow_state, superseded_item]
+    MemoryStatus:
+      type: string
+      enum: [active, superseded, resolved]
+    MemoryInput:
+      type: object
+      required: [type, content, attribution, sourceLabel]
+      properties:
+        type:
+          $ref: "#/components/schemas/MemoryType"
+        content:
+          type: string
+          minLength: 1
+        attribution:
+          type: string
+          enum: [user_input, uploaded_document, ai_analysis, human_reviewer]
+        sourceLabel:
+          type: string
+          minLength: 1
+        sourceLocator:
+          type: [string, "null"]
+        confidence:
+          type: [number, "null"]
+          minimum: 0
+          maximum: 1
+        status:
+          $ref: "#/components/schemas/MemoryStatus"
+        supersedesId:
+          type: [integer, "null"]
+    MemoryRecord:
+      type: object
+      required: [id, projectId, type, content, attribution, sourceLabel, sourceLocator, confidence, status, version, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        type:
+          $ref: "#/components/schemas/MemoryType"
+        content:
+          type: string
+        attribution:
+          type: string
+          enum: [user_input, uploaded_document, ai_analysis, human_reviewer]
+        sourceLabel:
+          type: string
+        sourceLocator:
+          type: [string, "null"]
+        confidence:
+          type: [number, "null"]
+        status:
+          $ref: "#/components/schemas/MemoryStatus"
+        version:
+          type: integer
+        supersedesId:
+          type: [integer, "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
 

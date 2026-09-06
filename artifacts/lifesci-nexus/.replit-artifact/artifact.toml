@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "LifeSci Nexus"
+description = "A project workspace for document intelligence and auditable project memory in AI-assisted life-sciences readiness research."
+version = "1.0.0"
+id = "artifacts/lifesci-nexus"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23440
+
+[services.development]
+run = "pnpm --filter @workspace/lifesci-nexus run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/lifesci-nexus", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/lifesci-nexus/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23440"
+BASE_PATH = "/"
