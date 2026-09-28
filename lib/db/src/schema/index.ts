@@ -21,3 +21,4 @@ export * from "./analyses";
 export * from "./documents";
 export * from "./memory";
 export * from "./projects";
+export * from "./lifesci";

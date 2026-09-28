@@ -285,7 +285,7 @@ export const useCreateProject = <TError = ErrorType<ErrorEnvelope>,
       return useMutation(getCreateProjectMutationOptions(options));
     }
 
-export const getGetProjectUrl = (projectId: number,) => {
+export const getGetProjectUrl = (projectId: string,) => {
 
 
 
@@ -296,7 +296,7 @@ export const getGetProjectUrl = (projectId: number,) => {
 /**
  * @summary Get a project workspace
  */
-export const getProject = async (projectId: number, options?: Parameters<typeof customFetch>[1]): Promise<Project> => {
+export const getProject = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<Project> => {
 
   return customFetch<Project>(getGetProjectUrl(projectId),
   {
@@ -311,14 +311,14 @@ export const getProject = async (projectId: number, options?: Parameters<typeof 
 
 
 
-export const getGetProjectQueryKey = (projectId: number,) => {
+export const getGetProjectQueryKey = (projectId: string,) => {
     return [
     `/api/projects/${projectId}`
     ] as const;
     }
 
 
-export const getGetProjectQueryOptions = <TData = Awaited<ReturnType<typeof getProject>>, TError = ErrorType<ErrorEnvelope>>(projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetProjectQueryOptions = <TData = Awaited<ReturnType<typeof getProject>>, TError = ErrorType<ErrorEnvelope>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -345,7 +345,7 @@ export type GetProjectQueryError = ErrorType<ErrorEnvelope>
  */
 
 export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TError = ErrorType<ErrorEnvelope>>(
- projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProject>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -362,7 +362,7 @@ export function useGetProject<TData = Awaited<ReturnType<typeof getProject>>, TE
 
 
 
-export const getGetProjectSummaryUrl = (projectId: number,) => {
+export const getGetProjectSummaryUrl = (projectId: string,) => {
 
 
 
@@ -373,7 +373,7 @@ export const getGetProjectSummaryUrl = (projectId: number,) => {
 /**
  * @summary Get project workspace summary
  */
-export const getProjectSummary = async (projectId: number, options?: Parameters<typeof customFetch>[1]): Promise<ProjectSummary> => {
+export const getProjectSummary = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<ProjectSummary> => {
 
   return customFetch<ProjectSummary>(getGetProjectSummaryUrl(projectId),
   {
@@ -388,14 +388,14 @@ export const getProjectSummary = async (projectId: number, options?: Parameters<
 
 
 
-export const getGetProjectSummaryQueryKey = (projectId: number,) => {
+export const getGetProjectSummaryQueryKey = (projectId: string,) => {
     return [
     `/api/projects/${projectId}/summary`
     ] as const;
     }
 
 
-export const getGetProjectSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getProjectSummary>>, TError = ErrorType<ErrorEnvelope>>(projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProjectSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetProjectSummaryQueryOptions = <TData = Awaited<ReturnType<typeof getProjectSummary>>, TError = ErrorType<ErrorEnvelope>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProjectSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -422,7 +422,7 @@ export type GetProjectSummaryQueryError = ErrorType<ErrorEnvelope>
  */
 
 export function useGetProjectSummary<TData = Awaited<ReturnType<typeof getProjectSummary>>, TError = ErrorType<ErrorEnvelope>>(
- projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProjectSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProjectSummary>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -439,7 +439,7 @@ export function useGetProjectSummary<TData = Awaited<ReturnType<typeof getProjec
 
 
 
-export const getListProjectDocumentsUrl = (projectId: number,) => {
+export const getListProjectDocumentsUrl = (projectId: string,) => {
 
 
 
@@ -450,7 +450,7 @@ export const getListProjectDocumentsUrl = (projectId: number,) => {
 /**
  * @summary List documents in a project
  */
-export const listProjectDocuments = async (projectId: number, options?: Parameters<typeof customFetch>[1]): Promise<Document[]> => {
+export const listProjectDocuments = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<Document[]> => {
 
   return customFetch<Document[]>(getListProjectDocumentsUrl(projectId),
   {
@@ -465,14 +465,14 @@ export const listProjectDocuments = async (projectId: number, options?: Paramete
 
 
 
-export const getListProjectDocumentsQueryKey = (projectId: number,) => {
+export const getListProjectDocumentsQueryKey = (projectId: string,) => {
     return [
     `/api/projects/${projectId}/documents`
     ] as const;
     }
 
 
-export const getListProjectDocumentsQueryOptions = <TData = Awaited<ReturnType<typeof listProjectDocuments>>, TError = ErrorType<ErrorEnvelope>>(projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectDocuments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getListProjectDocumentsQueryOptions = <TData = Awaited<ReturnType<typeof listProjectDocuments>>, TError = ErrorType<ErrorEnvelope>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectDocuments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -499,7 +499,7 @@ export type ListProjectDocumentsQueryError = ErrorType<ErrorEnvelope>
  */
 
 export function useListProjectDocuments<TData = Awaited<ReturnType<typeof listProjectDocuments>>, TError = ErrorType<ErrorEnvelope>>(
- projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectDocuments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectDocuments>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -516,7 +516,7 @@ export function useListProjectDocuments<TData = Awaited<ReturnType<typeof listPr
 
 
 
-export const getCreateProjectDocumentUrl = (projectId: number,) => {
+export const getCreateProjectDocumentUrl = (projectId: string,) => {
 
 
 
@@ -528,7 +528,7 @@ export const getCreateProjectDocumentUrl = (projectId: number,) => {
  * Accepts text content or base64-encoded PDF bytes for controlled extraction.
  * @summary Add a document to a project
  */
-export const createProjectDocument = async (projectId: number,
+export const createProjectDocument = async (projectId: string,
     documentInput: DocumentInput, options?: Parameters<typeof customFetch>[1]): Promise<Document> => {
 
   return customFetch<Document>(getCreateProjectDocumentUrl(projectId),
@@ -545,8 +545,8 @@ export const createProjectDocument = async (projectId: number,
 
 
 export const getCreateProjectDocumentMutationOptions = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectDocument>>, TError,{projectId: number;data: BodyType<DocumentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof createProjectDocument>>, TError,{projectId: number;data: BodyType<DocumentInput>}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectDocument>>, TError,{projectId: string;data: BodyType<DocumentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createProjectDocument>>, TError,{projectId: string;data: BodyType<DocumentInput>}, TContext> => {
 
 const mutationKey = ['createProjectDocument'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -558,7 +558,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createProjectDocument>>, {projectId: number;data: BodyType<DocumentInput>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createProjectDocument>>, {projectId: string;data: BodyType<DocumentInput>}> = (props) => {
           const {projectId,data} = props ?? {};
 
           return  createProjectDocument(projectId,data,requestOptions)
@@ -579,17 +579,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Add a document to a project
  */
 export const useCreateProjectDocument = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectDocument>>, TError,{projectId: number;data: BodyType<DocumentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectDocument>>, TError,{projectId: string;data: BodyType<DocumentInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof createProjectDocument>>,
         TError,
-        {projectId: number;data: BodyType<DocumentInput>},
+        {projectId: string;data: BodyType<DocumentInput>},
         TContext
       > => {
       return useMutation(getCreateProjectDocumentMutationOptions(options));
     }
 
-export const getGetProjectDocumentUrl = (projectId: number,
+export const getGetProjectDocumentUrl = (projectId: string,
     documentId: number,) => {
 
 
@@ -601,7 +601,7 @@ export const getGetProjectDocumentUrl = (projectId: number,
 /**
  * @summary Get a project document
  */
-export const getProjectDocument = async (projectId: number,
+export const getProjectDocument = async (projectId: string,
     documentId: number, options?: Parameters<typeof customFetch>[1]): Promise<Document> => {
 
   return customFetch<Document>(getGetProjectDocumentUrl(projectId,documentId),
@@ -617,7 +617,7 @@ export const getProjectDocument = async (projectId: number,
 
 
 
-export const getGetProjectDocumentQueryKey = (projectId: number,
+export const getGetProjectDocumentQueryKey = (projectId: string,
     documentId: number,) => {
     return [
     `/api/projects/${projectId}/documents/${documentId}`
@@ -625,7 +625,7 @@ export const getGetProjectDocumentQueryKey = (projectId: number,
     }
 
 
-export const getGetProjectDocumentQueryOptions = <TData = Awaited<ReturnType<typeof getProjectDocument>>, TError = ErrorType<ErrorEnvelope>>(projectId: number,
+export const getGetProjectDocumentQueryOptions = <TData = Awaited<ReturnType<typeof getProjectDocument>>, TError = ErrorType<ErrorEnvelope>>(projectId: string,
     documentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProjectDocument>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
@@ -653,7 +653,7 @@ export type GetProjectDocumentQueryError = ErrorType<ErrorEnvelope>
  */
 
 export function useGetProjectDocument<TData = Awaited<ReturnType<typeof getProjectDocument>>, TError = ErrorType<ErrorEnvelope>>(
- projectId: number,
+ projectId: string,
     documentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getProjectDocument>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
@@ -671,7 +671,7 @@ export function useGetProjectDocument<TData = Awaited<ReturnType<typeof getProje
 
 
 
-export const getGetDocumentAnalysisUrl = (projectId: number,
+export const getGetDocumentAnalysisUrl = (projectId: string,
     documentId: number,) => {
 
 
@@ -683,7 +683,7 @@ export const getGetDocumentAnalysisUrl = (projectId: number,
 /**
  * @summary Get the latest document analysis
  */
-export const getDocumentAnalysis = async (projectId: number,
+export const getDocumentAnalysis = async (projectId: string,
     documentId: number, options?: Parameters<typeof customFetch>[1]): Promise<DocumentAnalysis> => {
 
   return customFetch<DocumentAnalysis>(getGetDocumentAnalysisUrl(projectId,documentId),
@@ -699,7 +699,7 @@ export const getDocumentAnalysis = async (projectId: number,
 
 
 
-export const getGetDocumentAnalysisQueryKey = (projectId: number,
+export const getGetDocumentAnalysisQueryKey = (projectId: string,
     documentId: number,) => {
     return [
     `/api/projects/${projectId}/documents/${documentId}/analysis`
@@ -707,7 +707,7 @@ export const getGetDocumentAnalysisQueryKey = (projectId: number,
     }
 
 
-export const getGetDocumentAnalysisQueryOptions = <TData = Awaited<ReturnType<typeof getDocumentAnalysis>>, TError = ErrorType<ErrorEnvelope>>(projectId: number,
+export const getGetDocumentAnalysisQueryOptions = <TData = Awaited<ReturnType<typeof getDocumentAnalysis>>, TError = ErrorType<ErrorEnvelope>>(projectId: string,
     documentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDocumentAnalysis>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
@@ -735,7 +735,7 @@ export type GetDocumentAnalysisQueryError = ErrorType<ErrorEnvelope>
  */
 
 export function useGetDocumentAnalysis<TData = Awaited<ReturnType<typeof getDocumentAnalysis>>, TError = ErrorType<ErrorEnvelope>>(
- projectId: number,
+ projectId: string,
     documentId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getDocumentAnalysis>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
@@ -753,7 +753,7 @@ export function useGetDocumentAnalysis<TData = Awaited<ReturnType<typeof getDocu
 
 
 
-export const getAnalyzeDocumentUrl = (projectId: number,
+export const getAnalyzeDocumentUrl = (projectId: string,
     documentId: number,) => {
 
 
@@ -766,7 +766,7 @@ export const getAnalyzeDocumentUrl = (projectId: number,
  * Extracts structure and factual statements without regulatory or clinical conclusions.
  * @summary Analyze a project document
  */
-export const analyzeDocument = async (projectId: number,
+export const analyzeDocument = async (projectId: string,
     documentId: number, options?: Parameters<typeof customFetch>[1]): Promise<DocumentAnalysis> => {
 
   return customFetch<DocumentAnalysis>(getAnalyzeDocumentUrl(projectId,documentId),
@@ -783,8 +783,8 @@ export const analyzeDocument = async (projectId: number,
 
 
 export const getAnalyzeDocumentMutationOptions = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof analyzeDocument>>, TError,{projectId: number;documentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof analyzeDocument>>, TError,{projectId: number;documentId: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof analyzeDocument>>, TError,{projectId: string;documentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof analyzeDocument>>, TError,{projectId: string;documentId: number}, TContext> => {
 
 const mutationKey = ['analyzeDocument'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -796,7 +796,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof analyzeDocument>>, {projectId: number;documentId: number}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof analyzeDocument>>, {projectId: string;documentId: number}> = (props) => {
           const {projectId,documentId} = props ?? {};
 
           return  analyzeDocument(projectId,documentId,requestOptions)
@@ -817,17 +817,17 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Analyze a project document
  */
 export const useAnalyzeDocument = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof analyzeDocument>>, TError,{projectId: number;documentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof analyzeDocument>>, TError,{projectId: string;documentId: number}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof analyzeDocument>>,
         TError,
-        {projectId: number;documentId: number},
+        {projectId: string;documentId: number},
         TContext
       > => {
       return useMutation(getAnalyzeDocumentMutationOptions(options));
     }
 
-export const getListProjectMemoryUrl = (projectId: number,) => {
+export const getListProjectMemoryUrl = (projectId: string,) => {
 
 
 
@@ -838,7 +838,7 @@ export const getListProjectMemoryUrl = (projectId: number,) => {
 /**
  * @summary Retrieve project-scoped memory
  */
-export const listProjectMemory = async (projectId: number, options?: Parameters<typeof customFetch>[1]): Promise<MemoryRecord[]> => {
+export const listProjectMemory = async (projectId: string, options?: Parameters<typeof customFetch>[1]): Promise<MemoryRecord[]> => {
 
   return customFetch<MemoryRecord[]>(getListProjectMemoryUrl(projectId),
   {
@@ -853,14 +853,14 @@ export const listProjectMemory = async (projectId: number, options?: Parameters<
 
 
 
-export const getListProjectMemoryQueryKey = (projectId: number,) => {
+export const getListProjectMemoryQueryKey = (projectId: string,) => {
     return [
     `/api/projects/${projectId}/memory`
     ] as const;
     }
 
 
-export const getListProjectMemoryQueryOptions = <TData = Awaited<ReturnType<typeof listProjectMemory>>, TError = ErrorType<ErrorEnvelope>>(projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectMemory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getListProjectMemoryQueryOptions = <TData = Awaited<ReturnType<typeof listProjectMemory>>, TError = ErrorType<ErrorEnvelope>>(projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectMemory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -887,7 +887,7 @@ export type ListProjectMemoryQueryError = ErrorType<ErrorEnvelope>
  */
 
 export function useListProjectMemory<TData = Awaited<ReturnType<typeof listProjectMemory>>, TError = ErrorType<ErrorEnvelope>>(
- projectId: number, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectMemory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+ projectId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listProjectMemory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
@@ -904,7 +904,7 @@ export function useListProjectMemory<TData = Awaited<ReturnType<typeof listProje
 
 
 
-export const getCreateProjectMemoryUrl = (projectId: number,) => {
+export const getCreateProjectMemoryUrl = (projectId: string,) => {
 
 
 
@@ -916,7 +916,7 @@ export const getCreateProjectMemoryUrl = (projectId: number,) => {
  * Creates an auditable project-context record, never external regulatory evidence.
  * @summary Add a project memory record
  */
-export const createProjectMemory = async (projectId: number,
+export const createProjectMemory = async (projectId: string,
     memoryInput: MemoryInput, options?: Parameters<typeof customFetch>[1]): Promise<MemoryRecord> => {
 
   return customFetch<MemoryRecord>(getCreateProjectMemoryUrl(projectId),
@@ -933,8 +933,8 @@ export const createProjectMemory = async (projectId: number,
 
 
 export const getCreateProjectMemoryMutationOptions = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectMemory>>, TError,{projectId: number;data: BodyType<MemoryInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof createProjectMemory>>, TError,{projectId: number;data: BodyType<MemoryInput>}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectMemory>>, TError,{projectId: string;data: BodyType<MemoryInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createProjectMemory>>, TError,{projectId: string;data: BodyType<MemoryInput>}, TContext> => {
 
 const mutationKey = ['createProjectMemory'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -946,7 +946,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createProjectMemory>>, {projectId: number;data: BodyType<MemoryInput>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createProjectMemory>>, {projectId: string;data: BodyType<MemoryInput>}> = (props) => {
           const {projectId,data} = props ?? {};
 
           return  createProjectMemory(projectId,data,requestOptions)
@@ -967,11 +967,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Add a project memory record
  */
 export const useCreateProjectMemory = <TError = ErrorType<ErrorEnvelope>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectMemory>>, TError,{projectId: number;data: BodyType<MemoryInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createProjectMemory>>, TError,{projectId: string;data: BodyType<MemoryInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof createProjectMemory>>,
         TError,
-        {projectId: number;data: BodyType<MemoryInput>},
+        {projectId: string;data: BodyType<MemoryInput>},
         TContext
       > => {
       return useMutation(getCreateProjectMemoryMutationOptions(options));
