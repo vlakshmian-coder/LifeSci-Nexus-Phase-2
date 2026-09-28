@@ -115,7 +115,14 @@ import __bannerUrl from 'node:url';
 globalThis.require = __bannerCrReq(import.meta.url);
 globalThis.__filename = __bannerUrl.fileURLToPath(import.meta.url);
 globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
-    `,
+
+globalThis.__bundlerPathsOverrides = {
+  "thread-stream-worker": new URL("./thread-stream-worker.mjs", import.meta.url).pathname,
+  "pino-worker": new URL("./pino-worker.mjs", import.meta.url).pathname,
+  "pino/file": new URL("./pino-file.mjs", import.meta.url).pathname,
+  "pino-pretty": new URL("./pino-pretty.mjs", import.meta.url).pathname,
+};
+`,
     },
   });
 }

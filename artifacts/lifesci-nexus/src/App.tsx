@@ -21,13 +21,88 @@ import NotFound from '@/pages/not-found';
 const queryClient = new QueryClient();
 const teal = 'text-[hsl(var(--primary))]';
 
+/**
+ * LifeSci Nexus velvet visual system.
+ * Inspired by the RISE Talent Community's saturated magenta/blue language,
+ * adapted for a dark, premium Life Sciences workspace.
+ */
+function VelvetTheme() {
+  return <style>{`
+    :root {
+      /* Medium-dark velvet palette: lighter magenta, rich burgundy/plum,
+         and a softened midnight navy for comfortable long-form use. */
+      --background: 224 35% 20%;
+      --foreground: 320 22% 96%;
+      --card: 323 32% 16%;
+      --card-foreground: 320 22% 96%;
+      --popover: 322 31% 18%;
+      --popover-foreground: 320 22% 96%;
+      --primary: 322 72% 63%;
+      --primary-foreground: 0 0% 100%;
+      --secondary: 224 39% 25%;
+      --secondary-foreground: 225 30% 97%;
+      --muted: 318 25% 22%;
+      --muted-foreground: 315 17% 78%;
+      --accent: 337 48% 42%;
+      --accent-foreground: 0 0% 100%;
+      --destructive: 0 70% 60%;
+      --destructive-foreground: 0 0% 100%;
+      --border: 325 34% 32%;
+      --input: 321 28% 36%;
+      --input-background: 227 28% 16%;
+      --ring: 322 72% 63%;
+      --sidebar: 229 32% 14%;
+      --sidebar-foreground: 320 22% 96%;
+      --sidebar-primary: 322 72% 63%;
+      --sidebar-primary-foreground: 0 0% 100%;
+      --sidebar-accent: 324 43% 24%;
+      --sidebar-accent-foreground: 0 0% 100%;
+      --sidebar-border: 325 30% 28%;
+      --sidebar-ring: 322 72% 63%;
+      --shadow-sm: 0 14px 38px rgba(10, 8, 24, 0.28);
+    }
+
+    html, body, #root {
+      background: #222b45;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 8% 3%, rgba(224, 70, 176, 0.15), transparent 29%),
+        radial-gradient(circle at 90% 8%, rgba(74, 101, 190, 0.17), transparent 31%),
+        radial-gradient(circle at 58% 78%, rgba(137, 45, 93, 0.13), transparent 35%),
+        linear-gradient(135deg, #222b45 0%, #3a203b 48%, #263654 100%);
+      background-attachment: fixed;
+    }
+
+    .surface-grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px),
+        radial-gradient(circle at 85% 10%, rgba(232, 83, 188, .16), transparent 31%),
+        radial-gradient(circle at 10% 90%, rgba(65, 98, 190, .13), transparent 33%);
+      background-size: 28px 28px, 28px 28px, auto, auto;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 18px 50px rgba(8, 8, 20, .16);
+    }
+
+    input, textarea, select {
+      color-scheme: dark;
+    }
+
+    ::selection {
+      background: rgba(229, 75, 181, .30);
+      color: white;
+    }
+  `}</style>;
+}
+
 function cx(...values: Array<string | false | undefined>) { return values.filter(Boolean).join(' '); }
 function formatDate(value?: string | null) {
   if (!value) return 'Not recorded';
   return new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value));
 }
 function formatBytes(bytes = 0) { return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`; }
-function useProjectId() { const params = useParams<{ projectId: string }>(); return Number(params.projectId); }
+function useProjectId() { const params = useParams<{ projectId: string }>(); return params.projectId ?? ''; }
 
 function Mark() {
   return <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-sm"><Beaker size={18} strokeWidth={2.2} /></div>;
@@ -46,9 +121,9 @@ function ErrorState({ retry }: { retry: () => void }) { return <div className="f
 
 function Shell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
-  const match = location.match(/^\/projects\/(\d+)/);
+  const match = location.match(/^\/projects\/([^/]+)/);
   const projectId = match?.[1];
-  const projectQuery = useGetProject(projectId ? Number(projectId) : 0, { query: { enabled: Boolean(projectId), queryKey: getGetProjectQueryKey(Number(projectId || 0)) } });
+  const projectQuery = useGetProject(projectId ?? '', { query: { enabled: Boolean(projectId), queryKey: getGetProjectQueryKey(projectId ?? '') } });
   const project = projectQuery.data;
   return <div className="min-h-[100dvh] bg-[hsl(var(--background))]">
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-[255px] flex-col border-r border-[hsl(var(--border))] bg-[hsl(var(--card))] px-4 py-5 md:flex">
@@ -61,10 +136,15 @@ function Shell({ children }: { children: ReactNode }) {
       </div> : null}
       <div className="mb-2 px-2 text-[10px] font-bold uppercase tracking-[.18em] text-[hsl(var(--muted-foreground))]">Workspace</div>
       <nav className="space-y-1">
+        <NavLink href="/" active={location === '/'} icon={<FolderOpen size={16} />}>Projects</NavLink>
+        <NavLink href="/?new=1" active={location.includes('?new=1')} icon={<Plus size={16} />}>New notebook</NavLink>
+      </nav>
+      <div className="mb-2 mt-7 px-2 text-[10px] font-bold uppercase tracking-[.18em] text-[hsl(var(--muted-foreground))]">Project workspace</div>
+      <nav className="space-y-1">
         {projectId ? <><NavLink href={`/projects/${projectId}`} active={location === `/projects/${projectId}`} icon={<FolderOpen size={16} />}>Overview</NavLink>
           <NavLink href={`/projects/${projectId}/documents`} active={location.includes('/documents')} icon={<FileText size={16} />}>Documents</NavLink>
           <NavLink href={`/projects/${projectId}/memory`} active={location.includes('/memory')} icon={<Database size={16} />}>Memory</NavLink></> :
-          <NavLink href="/" active={location === '/'} icon={<FolderOpen size={16} />}>Projects</NavLink>}
+          <><DisabledNav icon={<FileText size={16} />}>Documents</DisabledNav><DisabledNav icon={<Database size={16} />}>Memory</DisabledNav></>}
       </nav>
       <div className="mt-auto rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] p-3.5">
         <div className="mb-2 flex items-center gap-2 text-xs font-semibold"><ShieldCheck size={15} className={teal} />Review-led workspace</div>
@@ -83,13 +163,16 @@ function Shell({ children }: { children: ReactNode }) {
 function NavLink({ href, active, icon, children }: { href: string; active: boolean; icon: ReactNode; children: ReactNode }) {
   return <Link href={href} data-testid={`link-nav-${String(children).toLowerCase()}`} className={cx('flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition', active ? 'bg-[hsl(var(--primary)/.1)] text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]')}>{icon}{children}</Link>;
 }
+function DisabledNav({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return <div title="Open a project to use this area" className="flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-[hsl(var(--muted-foreground)/.45)]">{icon}{children}<span className="ml-auto text-[9px] font-bold uppercase tracking-[.12em] opacity-70">Select project</span></div>;
+}
 
 function Home() {
   const { data: projects, isLoading, isError, refetch } = useListProjects();
   const createProject = useCreateProject();
-  const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', deviceName: '', description: '' });
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const [showForm, setShowForm] = useState(location.includes('?new=1'));
   const submit = (event: FormEvent) => {
     event.preventDefault();
     createProject.mutate({ data: form }, { onSuccess: (project) => { localStorage.setItem('lifesci:lastProject', String(project.id)); setLocation(`/projects/${project.id}`); } });
@@ -101,12 +184,12 @@ function Home() {
     </div>
     <div className="mb-4 flex items-end justify-between"><div><p className="font-mono-ui text-[10px] font-bold uppercase tracking-[.18em] text-[hsl(var(--muted-foreground))]">Your workspaces</p><h2 className="mt-1 font-display text-2xl font-bold">Projects</h2></div><Button onClick={() => setShowForm(true)} data-testid="button-create-project"><Plus size={17} />New project</Button></div>
     {isLoading ? <LoadingBlock /> : isError ? <ErrorState retry={refetch} /> : projects?.length ? <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{projects.map((project) => <Link href={`/projects/${project.id}`} key={project.id} data-testid={`card-project-${project.id}`} className="group rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-[var(--shadow-sm)] transition duration-300 hover:-translate-y-0.5 hover:border-[hsl(var(--primary)/.45)]"><div className="mb-8 flex items-start justify-between"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><Beaker size={18} /></div><Badge tone={project.status === 'active' ? 'teal' : 'neutral'}>{project.status}</Badge></div><h3 className="font-display text-xl font-bold">{project.name}</h3><p className="mt-1 text-sm font-medium text-[hsl(var(--primary))]">{project.deviceName}</p><p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">{project.description || 'No project description yet.'}</p><div className="mt-6 flex items-center justify-between border-t border-[hsl(var(--border))] pt-4 text-xs text-[hsl(var(--muted-foreground))]"><span>Updated {formatDate(project.updatedAt)}</span><ArrowRight size={15} className="transition group-hover:translate-x-1" /></div></Link>)}</div> : <div className="rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card)/.6)] px-6 py-14 text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><FolderOpen size={20} /></div><h3 className="mt-4 font-display text-xl font-bold">Start a project notebook</h3><p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">Create a workspace for a device, assay, or readiness question. Nothing becomes a conclusion without your review.</p><Button className="mt-6" onClick={() => setShowForm(true)} data-testid="button-create-first-project"><Plus size={17} />Create first project</Button></div>}
-    {showForm ? <ProjectDialog form={form} setForm={setForm} onClose={() => setShowForm(false)} onSubmit={submit} pending={createProject.isPending} /> : null}
+    {showForm ? <ProjectDialog form={form} setForm={setForm} onClose={() => { setShowForm(false); setLocation('/'); }} onSubmit={submit} pending={createProject.isPending} error={createProject.isError ? 'Could not save the project. Please try again.' : null} /> : null}
   </section></Shell>;
 }
 function Step({ n, title }: { n: string; title: string }) { return <div className="flex items-center gap-3"><span className="font-mono-ui text-[10px] text-[hsl(var(--accent))]">{n}</span><span>{title}</span><Check size={14} className="ml-auto text-[hsl(var(--primary))]" /></div>; }
-function ProjectDialog({ form, setForm, onClose, onSubmit, pending }: { form: { name: string; deviceName: string; description: string }; setForm: (f: { name: string; deviceName: string; description: string }) => void; onClose: () => void; onSubmit: (e: FormEvent) => void; pending: boolean }) {
-  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(var(--foreground)/.35)] p-4 backdrop-blur-sm"><form onSubmit={onSubmit} className="w-full max-w-lg rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-2xl"><div className="mb-6 flex items-start justify-between"><div><Badge tone="amber">New notebook</Badge><h2 className="mt-3 font-display text-2xl font-bold">Name the work</h2><p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">Keep it specific enough to find at 4pm.</p></div><button type="button" onClick={onClose} data-testid="button-close-project-dialog" className="rounded-lg p-2 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]"><X size={18} /></button></div><div className="space-y-4"><Field label="Project name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="e.g. LumaCheck readiness" required testId="input-project-name" /><Field label="Device or program" value={form.deviceName} onChange={(v) => setForm({ ...form, deviceName: v })} placeholder="e.g. LumaCheck Reader v2" required testId="input-device-name" /><label className="block text-sm font-semibold">Working description<textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What question is this workspace helping the team answer?" data-testid="input-project-description" className="mt-2 min-h-24 w-full resize-y rounded-lg border border-[hsl(var(--input))] bg-[hsl(var(--background))] p-3 text-sm outline-none transition focus:border-[hsl(var(--primary))]" /></label></div><div className="mt-7 flex justify-end gap-2"><Button type="button" variant="quiet" onClick={onClose} data-testid="button-cancel-project">Cancel</Button><Button type="submit" disabled={pending} data-testid="button-save-project">{pending ? <Loader2 className="animate-spin" size={16} /> : <Plus size={16} />}Create project</Button></div></form></div>;
+function ProjectDialog({ form, setForm, onClose, onSubmit, pending, error }: { form: { name: string; deviceName: string; description: string }; setForm: (f: { name: string; deviceName: string; description: string }) => void; onClose: () => void; onSubmit: (e: FormEvent) => void; pending: boolean; error: string | null }) {
+  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(var(--foreground)/.35)] p-4 backdrop-blur-sm"><form onSubmit={onSubmit} className="w-full max-w-lg rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-2xl"><div className="mb-6 flex items-start justify-between"><div><Badge tone="amber">New notebook</Badge><h2 className="mt-3 font-display text-2xl font-bold">Name the work</h2><p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">Keep it specific enough to find at 4pm.</p></div><button type="button" onClick={onClose} data-testid="button-close-project-dialog" className="rounded-lg p-2 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]"><X size={18} /></button></div><div className="space-y-4"><Field label="Project name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="e.g. LumaCheck readiness" required testId="input-project-name" /><Field label="Device or program" value={form.deviceName} onChange={(v) => setForm({ ...form, deviceName: v })} placeholder="e.g. LumaCheck Reader v2" required testId="input-device-name" /><label className="block text-sm font-semibold">Working description<textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="What question is this workspace helping the team answer?" data-testid="input-project-description" className="mt-2 min-h-24 w-full resize-y rounded-lg border border-[hsl(var(--input))] bg-[hsl(var(--background))] p-3 text-sm outline-none transition focus:border-[hsl(var(--primary))]" /></label></div>{error ? <p role="alert" className="mt-4 text-sm text-[hsl(var(--destructive))]">{error}</p> : null}<div className="mt-7 flex justify-end gap-2"><Button type="button" variant="quiet" onClick={onClose} data-testid="button-cancel-project">Cancel</Button><Button type="submit" disabled={pending} data-testid="button-save-project">{pending ? <Loader2 className="animate-spin" size={16} /> : <Plus size={16} />}Create project</Button></div></form></div>;
 }
 function Field({ label, value, onChange, placeholder, required, testId }: { label: string; value: string; onChange: (value: string) => void; placeholder: string; required?: boolean; testId: string }) { return <label className="block text-sm font-semibold">{label}<input required={required} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} data-testid={testId} className="mt-2 h-11 w-full rounded-lg border border-[hsl(var(--input))] bg-[hsl(var(--background))] px-3 text-sm outline-none transition placeholder:text-[hsl(var(--muted-foreground)/.7)] focus:border-[hsl(var(--primary))]" /></label>; }
 
@@ -114,11 +197,125 @@ function ProjectOverview() {
   const projectId = useProjectId();
   const summaryQuery = useGetProjectSummary(projectId, { query: { queryKey: getGetProjectSummaryQueryKey(projectId) } });
   const projectQuery = useGetProject(projectId, { query: { queryKey: getGetProjectQueryKey(projectId) } });
-  const summary = summaryQuery.data; const project = projectQuery.data || summary?.project;
-  if (summaryQuery.isLoading || projectQuery.isLoading) return <Shell><LoadingBlock /></Shell>;
-  if (summaryQuery.isError || projectQuery.isError || !project) return <Shell><ErrorState retry={() => { summaryQuery.refetch(); projectQuery.refetch(); }} /></Shell>;
-  return <Shell><div className="animate-rise"><ProjectHeader project={project} eyebrow="Project context" /><div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[['Documents', summary.documentCount, FileText], ['Analyzed', summary.analyzedDocumentCount, FileCheck2], ['Memory records', summary.memoryCount, Database], ['Open questions', summary.openQuestionCount, CircleHelp]].map(([label, value, Icon], index) => { const I = Icon as typeof FileText; return <div key={String(label)} className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-[var(--shadow-sm)]"><div className="flex items-center justify-between"><span className="text-sm text-[hsl(var(--muted-foreground))]">{label}</span><I size={17} className={index === 3 ? 'text-[hsl(var(--accent))]' : teal} /></div><div className="mt-4 font-display text-3xl font-bold">{String(value)}</div><div className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">{index === 3 ? 'Needs a reviewer' : 'In this workspace'}</div></div>; })}</div><div className="mt-8 grid gap-5 lg:grid-cols-[1.3fr_.7fr]"><section className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6"><div className="flex items-center justify-between"><div><p className="font-mono-ui text-[10px] font-bold uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">Recent activity</p><h2 className="mt-1 font-display text-2xl font-bold">What moved</h2></div><Clock3 size={18} className="text-[hsl(var(--muted-foreground))]" /></div>{summary.latestActivity?.length ? <div className="mt-6 space-y-1">{summary.latestActivity.map((item) => <div key={item.id} data-testid={`activity-${item.id}`} className="flex gap-4 border-l border-[hsl(var(--border))] py-3 pl-4"><div className="relative -ml-[21px] mt-1 h-2.5 w-2.5 rounded-full border-2 border-[hsl(var(--card))] bg-[hsl(var(--primary))]" /><div><div className="text-sm font-semibold">{item.label}</div><div className="mt-1 font-mono-ui text-[10px] text-[hsl(var(--muted-foreground))]">{formatDate(item.createdAt)} · {item.kind}</div></div></div>)}</div> : <Empty title="No activity yet" copy="Add a document to give this workspace its first trace." />}</section><aside className="surface-grid rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.55)] p-6"><Badge tone="amber">Notebook cue</Badge><h2 className="mt-4 font-display text-2xl font-bold leading-tight">Keep evidence and context in different lanes.</h2><p className="mt-3 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">Documents are external evidence. Memory is your team’s reviewed project context. Nexus never blurs the two.</p><Link href={`/projects/${projectId}/memory`} data-testid="link-review-memory" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[hsl(var(--primary))]">Review memory <ArrowRight size={15} /></Link></aside></div></div></Shell>;
+  const summary = summaryQuery.data;
+  const project = projectQuery.data || summary?.project;
+
+  if (summaryQuery.isLoading || projectQuery.isLoading) {
+    return <Shell><LoadingBlock /></Shell>;
+  }
+
+  if (summaryQuery.isError || projectQuery.isError || !project || !summary) {
+    return <Shell><ErrorState retry={() => { summaryQuery.refetch(); projectQuery.refetch(); }} /></Shell>;
+  }
+
+  const stats: Array<{
+    label: string;
+    value: number;
+    Icon: typeof FileText;
+  }> = [
+{ label: 'Documents', value: summary.documentCount, Icon: FileText },
+{ label: 'Analyzed', value: summary.analyzedDocumentCount, Icon: FileCheck2 },
+{ label: 'Memory records', value: summary.memoryCount, Icon: Database },
+{ label: 'Open questions', value: summary.openQuestionCount, Icon: CircleHelp },
+  ];
+   return (
+    <Shell>
+      <div className="animate-rise">
+        <ProjectHeader project={project} eyebrow="Project context" />
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.map(({ label, value, Icon: I }, index) => (
+            <div
+              key={label}
+              className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-[var(--shadow-sm)]"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-[hsl(var(--muted-foreground))]">
+                  {label}
+                </span>
+                <I
+                  size={17}
+                  className={
+                    index === 3
+                      ? 'text-[hsl(var(--accent))]'
+                      : teal
+                  }
+                />
+              </div>
+
+              <div className="mt-4 font-display text-3xl font-bold">
+                {String(value)}
+              </div>
+
+              <div className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+                {index === 3 ? 'Needs a reviewer' : 'In this workspace'}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-5 lg:grid-cols-[1.3fr_.7fr]">
+          <section className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-mono-ui text-[10px] font-bold uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">
+                  Recent activity
+                </p>
+                <h2 className="mt-1 font-display text-2xl font-bold">
+                  What moved
+                </h2>
+              </div>
+              <Clock3 size={18} className="text-[hsl(var(--muted-foreground))]" />
+            </div>
+
+            {summary.latestActivity?.length ? (
+              <div className="mt-6 space-y-1">
+                {summary.latestActivity.map((item) => (
+                  <div
+                    key={item.id}
+                    data-testid={`activity-${item.id}`}
+                    className="flex gap-4 border-l border-[hsl(var(--border))] py-3 pl-4"
+                  >
+                    <div className="relative -ml-[21px] mt-1 h-2.5 w-2.5 rounded-full border-2 border-[hsl(var(--card))] bg-[hsl(var(--primary))]" />
+                    <div>
+                      <div className="text-sm font-semibold">{item.label}</div>
+                      <div className="mt-1 font-mono-ui text-[10px] text-[hsl(var(--muted-foreground))]">
+                        {formatDate(item.createdAt)} · {item.kind}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Empty
+                title="No activity yet"
+                copy="Add a document to give this workspace its first trace."
+              />
+            )}
+          </section>
+
+          <aside className="surface-grid rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary)/.55)] p-6">
+            <Badge tone="amber">Notebook cue</Badge>
+            <h2 className="mt-4 font-display text-2xl font-bold leading-tight">
+              Keep evidence and context in different lanes.
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">
+              Documents are external evidence. Memory is your team’s reviewed project context. Nexus never blurs the two.
+            </p>
+            <Link
+              href={`/projects/${projectId}/memory`}
+              data-testid="link-review-memory"
+              className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[hsl(var(--primary))]"
+            >
+              Review memory <ArrowRight size={15} />
+            </Link>
+          </aside>
+        </div>
+      </div>
+    </Shell>
+  );
 }
+
 function ProjectHeader({ project, eyebrow }: { project: { name: string; deviceName: string; description: string; status: string; updatedAt: string }; eyebrow: string }) { return <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><div className="mb-3 flex items-center gap-2 font-mono-ui text-[10px] font-bold uppercase tracking-[.18em] text-[hsl(var(--muted-foreground))]"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))]" />{eyebrow}</div><h1 className="font-display text-4xl font-bold tracking-[-.03em]">{project.name}</h1><p className="mt-2 text-base font-medium text-[hsl(var(--primary))]">{project.deviceName}</p><p className="mt-3 max-w-2xl text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">{project.description}</p></div><div className="text-left md:text-right"><Badge tone={project.status === 'active' ? 'teal' : 'neutral'}>{project.status}</Badge><div className="mt-2 text-xs text-[hsl(var(--muted-foreground))]">Updated {formatDate(project.updatedAt)}</div></div></div>; }
 function Empty({ title, copy }: { title: string; copy: string }) { return <div className="py-10 text-center"><div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))]"><ClipboardCheck size={18} /></div><h3 className="mt-3 text-sm font-bold">{title}</h3><p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{copy}</p></div>; }
 
@@ -165,5 +362,5 @@ function MemoryDialog({ onClose, onSubmit, pending }: { onClose: () => void; onS
 function Router() {
   return <ErrorBoundary resetKey={window.location.pathname}><Switch><Route path="/" component={Home} /><Route path="/projects/:projectId" component={ProjectOverview} /><Route path="/projects/:projectId/documents" component={Documents} /><Route path="/projects/:projectId/documents/:documentId" component={DocumentReview} /><Route path="/projects/:projectId/memory" component={Memory} /><Route component={NotFound} /></Switch></ErrorBoundary>;
 }
-function App() { return <QueryClientProvider client={queryClient}><TooltipProvider><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><Router /></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>; }
+function App() { return <QueryClientProvider client={queryClient}><TooltipProvider><VelvetTheme /><WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}><Router /></WouterRouter><Toaster /></TooltipProvider></QueryClientProvider>; }
 export default App;
